@@ -1,65 +1,93 @@
 # ATM-SYSTEM-PROGRAM
 This project is a simple ATM (Automated Teller Machine) simulation developed in Python. It demonstrates the use of basic programming concepts by allowing a user to interact with an ATM-like menu after entering the correct PIN Check Balance Withdraw Money Deposit Money Exit
 
-#Ask user to create a atm pin
-aksForPassword= int(input("Enter a 4 digit password to set your ATM pin: "))
-pinPassword=aksForPassword
-
-#Ask use to choose to continue or to not
-print("Now you can have access to your bank !")
-askForContinuetion= input("Will you like to continue (y/n): ")
-
-#Variable for balance to use in the code
 balance=0
 
-#Comparing the answer inputed by the use to execute the program or to stop 
-if askForContinuetion == "n":
-    print("Thank you for choosing us")
-elif askForContinuetion== "y":
-    #Ask user for pin 
-    askPin= int(input("Enter your 4 digit ATM pin: "))
-    #Comparing the inputed answer using if statement
-    if askPin != pinPassword:
-        print("Access Denied!")
-    while askPin==pinPassword:
-        #The option to choose
-        print("=====ATM OPTION=====")
-        print(  "1. Check Balance")
-        print(  "2. Withdraw"   )
-        print(  "3. Deposit"    )
-        print(  "4. Exit"      )
-        print(  "5. Reset pin"      )
-        #Ask user to choose from the option above
-        askOption= int(input("Enter number from the option: "))
-        #Comparing the option selected to carry out operation
-        if askOption == 1:
-            print(f"Balance: $ {balance}")
-        elif askOption == 2:
-            askForAmount= int(input("Enter the amount you want to withdraw: "))
-            askForTheWithDrawalPin= int(input("Enter your pin:"))
-            #Ask user for the pin created to withdraw money
-            if askForTheWithDrawalPin == pinPassword:
-                if askForAmount > balance:
-                    print("Insufficient fund Enter Amount Again")
-                else:
-                    balance-=askForAmount
-                    print("Withdraw successful!")
+print("Welcome we are glad to have you here!")
+pinCreation= input("Create your 4 digit password: ")
+while len(pinCreation) !=4 or not pinCreation.isdigit():
+    print(" Please enter a 4 digit password")
+    pinCreation= input("Create your 4 digit password: ")
+if len(pinCreation) ==4 and pinCreation.isdigit():
+    transaction_history=[]
 
-        elif askOption == 3:
-            askForDepositAmount= int(input("Enter amount to deposit: "))
-            balance+=askForDepositAmount
-            print("Deposit successful!")
+    AskToContinue= input("Will like to continue (y/n)?")
+    if AskToContinue=="n":
+        print("Thank you for choosing to bannk with us")
+    elif AskToContinue == "y":
+        print("Now you can login to your account")
 
-        elif askOption == 4:
-            print("Thank you for choosing our bank.")
-            break
+        attempt=0
+        maxAttempt=3
 
-        elif askOption == 5:
-            askForResetPin= int(input("Enter your old pin: "))
-            if askForResetPin == pinPassword:
-                askForNewPassword= int(input("Enter your new password: "))
-                pinPassword==askForNewPassword
-                print("Password Reset Successful!")
+        askForPin= input("Enter your ATM pin: ")
 
-        else:
-            print("Invalid option")
+        while attempt <3:
+            if askForPin != pinCreation:
+                attempt+=1
+                print(f"Attempt left: {maxAttempt-attempt}")
+                askForPin= input("Enter your ATM pin: ")
+            elif askForPin==pinCreation:
+
+                while True:
+                    print("=====ATM MENU=====")
+                    print("1. Check Balance")
+                    print("2. Deposit")
+                    print("3. Withdraw")
+                    print("4. Transaction History")
+                    print("5. Change Pin")
+                    print("6. Exit")
+
+                    askForOption = int(input("Choose an option: "))
+
+                    if askForOption == 1:
+                        print(f"Current Balance: {balance}")
+                        transaction_history.append(f"Current Balance: {balance}")
+                    elif askForOption == 2:
+                        askForDepositAmount= int(input("Enter the amount you want to deposite: "))
+                        if askForDepositAmount > 0:
+                            balance+=askForDepositAmount
+                            transaction_history.append(f"Deposite: {askForDepositAmount}")
+                            print("Deposite successful")
+                        else:
+                            print("Deposite failed")
+                    elif askForOption == 3:
+                        askForWithrawalAmount= int(input("Enter amount: "))
+                        askForAtmPin= input("Enter your atm pin: ")
+                        if askForAtmPin!= pinCreation:
+                            print("Incorrect pin")
+                        elif askForAtmPin == pinCreation:
+                            if askForWithrawalAmount <= balance:
+                                balance-=askForWithrawalAmount
+                                print("Withdraw successful")
+                                transaction_history.append(f"Withdrawal: {askForWithrawalAmount}")
+                            elif askForWithrawalAmount > balance:
+                                print("Insufficient fund")
+                    elif askForOption == 4:
+                        if not transaction_history:
+                            print("No transaction yet")
+                        else:
+                            for transaction in transaction_history:
+                                print(transaction)
+                    elif askForOption == 5:
+                        askForCurrentPin= input("Enter your old pin: ")
+                        if askForCurrentPin != pinCreation:
+                            print("Incorrect pin")
+                            askForCurrentPin= input("Enter your old pin: ")
+                        elif askForCurrentPin == pinCreation:
+                            askForNewPin= input("Enter your new pin: ")
+                            if len(askForNewPin) == 4 and askForNewPin.isdigit():
+                                askForConfirmPin= input("Confirm the pin: ")
+                                if askForConfirmPin == askForNewPin:
+                                    pinCreation= askForConfirmPin
+                                    print("Pin change successful")
+                                elif askForConfirmPin != askForNewPin:
+                                    print("Incorrect pin")
+                                    askForNewPin= input("Enter your new pin: ")
+                    elif askForOption == 6:
+                        print("Thank you for banking with us")
+                        break
+                break
+        if attempt == maxAttempt:
+            print("Account Locked")
+
